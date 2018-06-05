@@ -1,25 +1,13 @@
-/*
-GAME RULES:
-- The game has 2 players, playing in rounds
-- In each turn, a player rolls a dice as many times as he whishes. Each result get added to his ROUND score
-- BUT, if the player rolls a 1, all his ROUND score gets lost. After that, it's the next player's turn
-- The player can choose to 'Hold', which means that his ROUND score gets added to his GLBAL score. After that, it's the next player's turn
-- The first player to reach 100 points on GLOBAL score wins the game
-*/
-
 //total score index 0 is player 1 and index 1 is player 2 
 let scores = [0,0]
+// roundscrore
+let roundScore = 0
 //active player 0 or 1
 let activePlayer = 0
 
-// document.getElementById('score-0').textContent = '0'
-// document.getElementById('current-0').textContent = '0'
-// document.getElementById('score-1').textContent = '0'
-// document.getElementById('current-1').textContent = '0'
-
-
 document.querySelector('.dice').style.display = 'none'
 
+//change player function
 const changePlayer = () => {
     // change next player
     activePlayer === 0 ? activePlayer = 1 : activePlayer = 0
@@ -28,12 +16,14 @@ const changePlayer = () => {
     document.querySelector('.player-1-panel').classList.toggle('active')
 }
 
+//check if player reaches 100 points in score
 const checkWinner = () => {
     if (scores[activePlayer] === 100) {
         //do something
     }
 }
 
+//listen to click from roll dice button 
 document.querySelector('.btn-roll').addEventListener('click', () => {
     // get a random number
     let dice = Math.floor(Math.random() * 6) + 1
@@ -45,29 +35,72 @@ document.querySelector('.btn-roll').addEventListener('click', () => {
     
     // update the score only if number is not one
     if (dice !== 1) {
-        //add the roundScore to the globalPlayer
-        scores[activePlayer] += dice
+        //add the roundScore 
+        roundScore += dice
         //set the current score 
-        document.querySelector('#current-' + activePlayer).textContent = scores[activePlayer]
-        checkWinner()
+        document.querySelector('#current-' + activePlayer).textContent = roundScore
     } else { 
-        //reset score to 0
-        scores[activePlayer] = 0
+        //reset roundScore to 0
+        roundScore = 0
         //display the score 
-        document.querySelector('#current-' + activePlayer).textContent = scores[activePlayer]
+        document.querySelector('#current-' + activePlayer).textContent = roundScore
+        // scores[activePlayer] = 0
         changePlayer()
-        //dice disappear
-        // diceDOM.style.display = 'none'
     }
+    checkWinner()
 })
 
+//listen for click from the hold button
 document.querySelector('.btn-hold').addEventListener('click', () => {
     // display the results on the dice class
     let diceDOM = document.querySelector('.dice')
     //dice disappear
     diceDOM.style.display = 'none'
+    //update global score 
+    scores[activePlayer] += roundScore
+    //display the score 
+    document.querySelector('#score-'+ activePlayer).textContent = scores[activePlayer]
+    //reset roundScore to 0
+    roundScore = 0
+    //display the score 
+    document.querySelector('#current-' + activePlayer).textContent = roundScore
     //change player    
     changePlayer()
 })
 
+//listen for click from the new game button
+document.querySelector('.btn-new').addEventListener('click', () => {
+    //do not display the dice
+    document.querySelector('.dice').style.display = 'none'
+    //reset all scores to 0
+    roundScore = 0
+    scores[0] = 0
+    scores[1] = 0
+    //display all score to 0
+    document.querySelector('#score-0').textContent = scores[0]
+    document.querySelector('#current-0').textContent = roundScore
+    document.querySelector('#score-1').textContent = scores[1]
+    document.querySelector('#current-1').textContent = roundScore
+})
 
+//listen for click from the rules button
+document.querySelector('.btn-rules').addEventListener('click', () => {
+
+    //get the rules
+    const rules = document.getElementById('rules')
+    
+    //display the rules
+    rules.style.display = "block"
+
+    //get the close button and listen for click
+    document.querySelector('.close').addEventListener('click', () => {
+        rules.style.display = "none"
+    })
+
+    // When the user clicks anywhere outside of the rules box, close it
+    window.onclick = function(event) {
+        if (event.target == rules) {
+            rules.style.display = "none";
+        }
+    }
+})
