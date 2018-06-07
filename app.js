@@ -5,6 +5,8 @@ let roundScore = 0
 //active player 0 or 1
 let activePlayer = 0
 
+let winner
+
 document.querySelector('.dice').style.display = 'none'
 
 //change player function
@@ -14,14 +16,12 @@ const changePlayer = () => {
     //player button change
     document.querySelector('.player-0-panel').classList.toggle('active')
     document.querySelector('.player-1-panel').classList.toggle('active')
+    //reset roundScore to 0
+    roundScore = 0
+    //display the score 
+    document.querySelector('#current-' + activePlayer).textContent = roundScore
 }
 
-//check if player reaches 100 points in score
-const checkWinner = () => {
-    if (scores[activePlayer] === 100) {
-        //do something
-    }
-}
 
 //listen to click from roll dice button 
 document.querySelector('.btn-roll').addEventListener('click', () => {
@@ -39,33 +39,30 @@ document.querySelector('.btn-roll').addEventListener('click', () => {
         roundScore += dice
         //set the current score 
         document.querySelector('#current-' + activePlayer).textContent = roundScore
+        
     } else { 
-        //reset roundScore to 0
-        roundScore = 0
-        //display the score 
-        document.querySelector('#current-' + activePlayer).textContent = roundScore
-        // scores[activePlayer] = 0
         changePlayer()
+        
     }
-    checkWinner()
 })
 
 //listen for click from the hold button
 document.querySelector('.btn-hold').addEventListener('click', () => {
-    // display the results on the dice class
-    let diceDOM = document.querySelector('.dice')
-    //dice disappear
-    diceDOM.style.display = 'none'
-    //update global score 
-    scores[activePlayer] += roundScore
-    //display the score 
-    document.querySelector('#score-'+ activePlayer).textContent = scores[activePlayer]
-    //reset roundScore to 0
-    roundScore = 0
-    //display the score 
-    document.querySelector('#current-' + activePlayer).textContent = roundScore
-    //change player    
-    changePlayer()
+     //  //update global score 
+     scores[activePlayer] += roundScore
+     //display the score 
+     document.querySelector('#score-'+ activePlayer).textContent = scores[activePlayer]
+
+    if (scores[activePlayer] >= 100) {
+        document.querySelector('#name-'+ activePlayer).textContent = 'Winner!'
+        document.querySelector('.dice').style.display = 'none'
+        document.querySelector('.player-'+ activePlayer + '-panel').classList.add('winner')
+        document.querySelector('.player-'+ activePlayer + '-panel').classList.remove('active')
+    } else {  
+        //change player    
+        changePlayer()  
+    }
+    
 })
 
 //listen for click from the new game button
