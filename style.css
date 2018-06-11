@@ -93,7 +93,19 @@ ul {
 
 ul li:before {
     content: '✓';
-  }
+}
+
+input[type=text] {
+    width: 60%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    font-size: 30px;
+    text-align: center;
+    position: relative;
+
+}
+
       
 
 /**********************************************
