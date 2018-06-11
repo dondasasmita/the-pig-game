@@ -1,13 +1,28 @@
-//total score index 0 is player 1 and index 1 is player 2 
+//variables to store score, round-score, active player (0 or 1), and all dice rolled in the round
 let scores = [0,0]
-// roundscrore
 let roundScore = 0
-//active player 0 or 1
 let activePlayer = 0
+let allDiceRolled = []
 
-let winner
 
-document.querySelector('.dice').style.display = 'none'
+// function to reset game 
+const resetGame = () => {
+    //do not display the dice
+    document.querySelector('.dice').style.display = 'none'
+    //reset all scores to 0
+    roundScore = 0
+    activePlayer = 0
+    scores = [0,0]
+    allDiceRolled = []
+    //display all score to 0
+    document.querySelector('#score-0').textContent = scores[0]
+    document.querySelector('#current-0').textContent = roundScore
+    document.querySelector('#score-1').textContent = scores[1]
+    document.querySelector('#current-1').textContent = roundScore
+    //reset players'names
+    document.querySelector('#name-0').textContent = 'Player 1'
+    document.querySelector('#name-1').textContent = 'Player 2'
+}
 
 //change player function
 const changePlayer = () => {
@@ -16,10 +31,22 @@ const changePlayer = () => {
     //player button change
     document.querySelector('.player-0-panel').classList.toggle('active')
     document.querySelector('.player-1-panel').classList.toggle('active')
-    //reset roundScore to 0
+    //reset roundScore and allDiceRolled to 0
     roundScore = 0
+    allDiceRolled = []
     //display the score 
     document.querySelector('#current-' + activePlayer).textContent = roundScore
+}
+
+//function to check for double six 
+const checkDoubleSix = () => {
+    // last index
+    let lastIndex = allDiceRolled.length - 1
+    if (allDiceRolled[lastIndex] === 6 && allDiceRolled[lastIndex - 1] === 6) {
+        return true
+     } else {
+         return false
+     }
 }
 
 
@@ -35,14 +62,23 @@ document.querySelector('.btn-roll').addEventListener('click', () => {
     
     // update the score only if number is not one
     if (dice !== 1) {
+        //store dice value to the allDiceRolled 
+        allDiceRolled.push(dice)
         //add the roundScore 
         roundScore += dice
+        //check for double six
+        if (checkDoubleSix() === true) {
+            // activePlayer lose the game
+            document.querySelector('#name-'+ activePlayer).textContent = 'Loser!'
+            document.querySelector('.dice').style.display = 'none'
+            document.querySelector('.player-'+ activePlayer + '-panel').classList.add('loser')
+            // change active player and reset game
+            changePlayer()
+        } 
         //set the current score 
-        document.querySelector('#current-' + activePlayer).textContent = roundScore
-        
+        document.querySelector('#current-' + activePlayer).textContent = roundScore        
     } else { 
         changePlayer()
-        
     }
 })
 
@@ -62,23 +98,11 @@ document.querySelector('.btn-hold').addEventListener('click', () => {
         //change player    
         changePlayer()  
     }
-    
+
 })
 
 //listen for click from the new game button
-document.querySelector('.btn-new').addEventListener('click', () => {
-    //do not display the dice
-    document.querySelector('.dice').style.display = 'none'
-    //reset all scores to 0
-    roundScore = 0
-    scores[0] = 0
-    scores[1] = 0
-    //display all score to 0
-    document.querySelector('#score-0').textContent = scores[0]
-    document.querySelector('#current-0').textContent = roundScore
-    document.querySelector('#score-1').textContent = scores[1]
-    document.querySelector('#current-1').textContent = roundScore
-})
+document.querySelector('.btn-new').addEventListener('click', resetGame)
 
 //listen for click from the rules button
 document.querySelector('.btn-rules').addEventListener('click', () => {
